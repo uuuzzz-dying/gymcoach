@@ -5,6 +5,7 @@ import { db } from '@/lib/db';
 import { signSession, SESSION_COOKIE, SESSION_COOKIE_OPTIONS } from '@/lib/auth';
 import { registerSchema } from '@/lib/schemas/auth';
 import { seedExerciseCatalog } from '@/lib/exercise-catalog';
+import { createBeginnerPlan } from '@/lib/beginner-plan';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 
 // POST /api/auth/register: creates an account, seeds the default exercise
@@ -44,6 +45,7 @@ export async function POST(req: Request) {
 
     // Give the new account a starter catalog so the app is not empty.
     await seedExerciseCatalog(db, user.id);
+    await createBeginnerPlan(user.id);
 
     const token = await signSession({ userId: user.id, email: user.email });
     (await cookies()).set(SESSION_COOKIE, token, SESSION_COOKIE_OPTIONS);

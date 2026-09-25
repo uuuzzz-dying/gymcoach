@@ -17,6 +17,8 @@ export const sorenessSchema = z
 export const readinessCheckinInputSchema = z.object({
   readiness: ratingScale,
   sleepQuality: ratingScale,
+  glucoseMmol: z.number().finite().positive().max(100).optional().nullable(),
+  glucoseContext: z.string().trim().max(200).optional().nullable(),
   soreness: sorenessSchema,
   note: z.string().trim().max(500).optional().nullable(),
 });

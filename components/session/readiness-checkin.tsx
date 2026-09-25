@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { readinessCheckinInputSchema } from '@/lib/schemas/readiness';
 import { muscleGroupMessageKeys } from '@/i18n/enum-keys';
 
@@ -36,6 +37,8 @@ export function ReadinessCheckin() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [soreness, setSoreness] = useState<Partial<Record<MuscleGroup, number>>>({});
   const [note, setNote] = useState('');
+  const [glucose, setGlucose] = useState('');
+  const [glucoseContext, setGlucoseContext] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -62,6 +65,8 @@ export function ReadinessCheckin() {
     const payload = {
       readiness,
       sleepQuality,
+      ...(glucose !== '' ? { glucoseMmol: Number(glucose) } : {}),
+      ...(glucoseContext.trim() ? { glucoseContext: glucoseContext.trim() } : {}),
       ...(Object.keys(soreness).length > 0 ? { soreness } : {}),
       ...(trimmedNote.length > 0 ? { note: trimmedNote } : {}),
     };
@@ -121,6 +126,21 @@ export function ReadinessCheckin() {
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        <div className="rounded-md border border-amber-500/30 bg-amber-500/5 p-3 text-sm">
+          <p className="font-medium">糖尿病训练前提示（非医疗建议）</p>
+          <p className="mt-1 text-muted-foreground">
+            血糖低于 4 mmol/L 或出现低血糖症状时，停止运动，按个人低血糖处理方案补充快速糖分，10–15 分钟后复测。严重意识异常、抽搐或无法吞咽时请旁人拨打 999，不要喂食。数值不低不代表适合运动；感到不适时不要硬撑。
+          </p>
+          <a href="https://www.nhs.uk/conditions/low-blood-sugar-hypoglycaemia/" className="mt-2 inline-block underline" target="_blank" rel="noreferrer">NHS 处理指引</a>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="glucose">手动血糖记录（mmol/L，可留空）</Label>
+          <Input id="glucose" inputMode="decimal" type="number" min="0.1" max="100" step="0.1" value={glucose} onChange={(event) => setGlucose(event.target.value)} />
+          {glucose !== '' && Number(glucose) < 4 && <p role="alert" className="text-sm font-semibold text-amber-600">当前输入低于 4 mmol/L。请暂停训练，先按低血糖处理指引处理。</p>}
+          <Label htmlFor="glucose-context">测量背景（可选）</Label>
+          <Input id="glucose-context" maxLength={200} value={glucoseContext} onChange={(event) => setGlucoseContext(event.target.value)} placeholder="例如：训练前，午餐后两小时" />
+          <p className="text-sm text-muted-foreground">这些字段单独保存在你的账号中，不用于自动调整重量或药物。常规备注可能进入 AI 教练上下文，请勿在备注里填写不希望发送给 AI 的信息。</p>
+        </div>
         <ScaleRow label={t('overall')} value={readiness} onChange={setReadiness} />
         <ScaleRow label={t('sleep')} value={sleepQuality} onChange={setSleepQuality} />
 

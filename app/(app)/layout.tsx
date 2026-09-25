@@ -16,7 +16,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="flex items-center justify-between px-4 py-3">
           <Link href="/" className="flex items-center gap-2">
             <Dumbbell className="size-5" />
-            <span className="text-base font-semibold">GymCoach</span>
+            <span className="text-base font-semibold">我的 PureGym 教练</span>
           </Link>
           <div className="flex items-center gap-2">
             <OfflineIndicator />

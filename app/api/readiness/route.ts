@@ -28,6 +28,8 @@ export async function POST(req: Request) {
         userId,
         readiness: data.readiness,
         sleepQuality: data.sleepQuality,
+        glucoseMmol: data.glucoseMmol ?? null,
+        glucoseContext: data.glucoseContext ?? null,
         soreness: (data.soreness ?? undefined) as Prisma.InputJsonValue | undefined,
         note: data.note ?? null,
       },

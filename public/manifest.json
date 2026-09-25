@@ -1,7 +1,7 @@
 {
-  "name": "GymCoach",
-  "short_name": "GymCoach",
-  "description": "Strength training tracker and personal AI coach.",
+  "name": "我的 PureGym 教练",
+  "short_name": "PureGym 教练",
+  "description": "我的训练打卡、器械教学与个人健身教练。",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

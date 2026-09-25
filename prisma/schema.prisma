@@ -53,6 +53,8 @@ model User {
   gyms              Gym[]              @relation("GymOwner")
   mcpAccessTokens   McpAccessToken[]
   activeGymId       String?
+  membershipPence   Int?
+  activityLogs      ActivityLog[]
   activeGym         Gym?               @relation("ActiveGym", fields: [activeGymId], references: [id], onDelete: SetNull)
 }
 
@@ -245,6 +247,20 @@ model ProgramExercise {
 enum SetAutoregulationMode {
   PRESERVE_RIR
   PRESERVE_REPS
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      String
+  name      String
+  date      String
+  minutes   Int
+  atGym     Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
 }
 
 model Session {
@@ -514,6 +530,8 @@ model CoachSession {
 // signal for recovery-anchored auto-regulation. Soreness is stored per muscle
 // group as a JSON map (group -> 1-5) so adding groups later needs no migration.
 model ReadinessCheckin {
+  glucoseMmol       Float?
+  glucoseContext    String?
   id           String   @id @default(cuid())
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)

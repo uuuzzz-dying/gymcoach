@@ -1,23 +1,21 @@
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages, getTranslations } from 'next-intl/server';
+import { getLocale, getMessages } from 'next-intl/server';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/shared/theme-provider';
 import { PwaUpdateManager } from '@/components/shared/pwa-update-manager';
 import './globals.css';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('common.metadata');
-
   return {
-    title: 'GymCoach',
-    description: t('description'),
-    applicationName: 'GymCoach',
+    title: '我的 PureGym 教练',
+    description: '一个用于训练引导、打卡与渐进记录的个人健身教练。',
+    applicationName: '我的 PureGym 教练',
     manifest: '/manifest.json',
     appleWebApp: {
       capable: true,
       statusBarStyle: 'black-translucent',
-      title: 'GymCoach',
+      title: 'PureGym 教练',
     },
     icons: {
       icon: [
@@ -33,8 +31,6 @@ export const viewport: Viewport = {
   themeColor: '#000000',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
