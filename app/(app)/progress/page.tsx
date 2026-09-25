@@ -484,13 +484,13 @@ export default async function ProgressPage(
           unit={unit}
         />
 
-        <PhotosCard
+        {!process.env.VERCEL && <PhotosCard
           photos={progressPhotos.map((p) => ({
             id: p.id,
             takenAt: p.takenAt.toISOString(),
             note: p.note,
           }))}
-        />
+        />}
 
         {conditioningWeeks && (
           <ConditioningCard

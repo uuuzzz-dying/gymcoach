@@ -55,6 +55,9 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const userId = await requireApiUserId();
+    if (process.env.VERCEL) {
+      throw new ApiError(503, '当前托管版本暂不支持照片上传；训练和身体数据记录不受影响。');
+    }
 
     const url = new URL(req.url);
     const parsedQuery = progressPhotoUploadQuerySchema.safeParse({
