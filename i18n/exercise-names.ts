@@ -1,11 +1,23 @@
 import type { Locale } from '@/i18n/config';
 
 type ExerciseNameDictionary = Readonly<Record<string, string>>;
+type DictionaryLocale = Locale | 'fr' | 'ru';
 
 // Exercise identity stays in the database and API payloads exactly as stored.
 // These dictionaries are display-only, so another locale can be added without
 // coupling exercise data to the application's message catalog.
-export const exerciseNameDictionaries: Partial<Record<Locale, ExerciseNameDictionary>> = {
+export const exerciseNameDictionaries: Partial<Record<DictionaryLocale, ExerciseNameDictionary>> = {
+  zh: {
+    'Machine chest press': '器械推胸',
+    'Dumbbell lateral raise': '哑铃侧平举',
+    'Triceps pushdown (rope)': '绳索三头下压',
+    'Neutral-grip lat pulldown': '对握高位下拉',
+    'Chest-supported machine row': '胸托器械划船',
+    'Standing cable curl (straight bar)': '站姿绳索弯举',
+    'Leg press (45 deg)': '45° 倒蹬机',
+    'Seated leg curl': '坐姿腿弯举',
+    'Standing calf raise (or machine)': '站姿提踵（或器械）',
+  },
   ru: {
     'Back extension (hyperextension)': 'Гиперэкстензия',
     'Back Squat': 'Приседания со штангой на спине',

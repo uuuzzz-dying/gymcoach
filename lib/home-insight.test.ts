@@ -95,17 +95,17 @@ describe('selectHomeInsight (issue #237)', () => {
   });
 
   it('renders every insight through the requested locale', () => {
-    const translate = createHomeInsightTranslator('ru');
+    const translate = createHomeInsightTranslator('zh');
     const result = selectHomeInsight(
       input({
         deload: {
           recommended: true,
-          reasons: [{ kind: 'stalled-lifts', exerciseNames: ['Жим лёжа', 'Приседания'] }],
+          reasons: [{ kind: 'stalled-lifts', exerciseNames: ['推胸', '腿举'] }],
         },
       }),
       translate,
     );
-    expect(result?.title).toBe('Похоже, пора восстановиться');
-    expect(result?.detail).toContain('Прогресс остановился в 2 упражнениях');
+    expect(result?.title).toBe('也许该恢复一下了');
+    expect(result?.detail).toContain('2 个动作近期停滞');
   });
 });

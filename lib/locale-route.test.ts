@@ -19,13 +19,13 @@ describe('POST /api/locale', () => {
   });
 
   it('sets the locale cookie with the expected attributes', async () => {
-    const response = await POST(request('http://gymcoach.local:3030/api/locale', { locale: 'ru' }));
+    const response = await POST(request('http://gymcoach.local:3030/api/locale', { locale: 'zh' }));
     const cookie = response.headers.get('set-cookie') ?? '';
 
     expect(response.status).toBe(200);
     expect(response.headers.get('cache-control')).toBe('no-store');
-    expect(await response.json()).toEqual({ locale: 'ru' });
-    expect(cookie).toContain('gymcoach.locale=ru');
+    expect(await response.json()).toEqual({ locale: 'zh' });
+    expect(cookie).toContain('gymcoach.locale=zh');
     expect(cookie).toContain('Path=/');
     expect(cookie).toContain('Max-Age=31536000');
     expect(cookie).toContain('SameSite=lax');
@@ -113,7 +113,7 @@ describe('POST /api/locale', () => {
     const direct = await POST(
       request(
         'https://gymcoach.example/api/locale',
-        { locale: 'fr' },
+        { locale: 'zh' },
         { origin: 'https://gymcoach.example' },
       ),
     );
@@ -122,18 +122,18 @@ describe('POST /api/locale', () => {
     const proxied = await POST(
       request(
         'http://gymcoach.internal:3030/api/locale',
-        { locale: 'fr' },
+        { locale: 'zh' },
         { origin: 'https://gymcoach.example', 'x-forwarded-host': 'gymcoach.example' },
       ),
     );
     expect(proxied.status).toBe(200);
-    expect(proxied.headers.get('set-cookie')).toContain('gymcoach.locale=fr');
+    expect(proxied.headers.get('set-cookie')).toContain('gymcoach.locale=zh');
 
     // Two proxies in a row append to the header; the browser-facing host comes first.
     const chained = await POST(
       request(
         'http://gymcoach.internal:3030/api/locale',
-        { locale: 'fr' },
+        { locale: 'zh' },
         {
           origin: 'https://gymcoach.example',
           'x-forwarded-host': 'gymcoach.example, edge.internal',

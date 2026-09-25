@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 const LINKS = [
   { href: '/', label: 'home' },
+  { href: '/guide', label: 'guide' },
   { href: '/history', label: 'history' },
   { href: '/progress', label: 'progress' },
   { href: '/coach', label: 'coach' },
@@ -22,8 +23,7 @@ export function NavLinks() {
   return (
     <nav className="flex gap-1 overflow-x-auto border-t border-border px-2 py-1">
       {LINKS.map((link) => {
-        const active =
-          link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+        const active = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
         return (
           <Link
             key={link.href}

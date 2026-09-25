@@ -11,8 +11,7 @@ import {
 import { getExerciseDisplayName } from '@/i18n/exercise-names';
 import { defaultLocale, isLocale, type Locale } from '@/i18n/config';
 import englishMessages from '@/messages/en';
-import frenchMessages from '@/messages/fr';
-import russianMessages from '@/messages/ru';
+import chineseMessages from '@/messages/zh';
 
 // How far back to look when judging stalled lifts and all-time records for the
 // home insight. Matches the progress page's recent window so the home nudge and
@@ -58,9 +57,8 @@ export type HomeInsightTranslator = (
 ) => string;
 
 const messageCatalogs = {
+  zh: chineseMessages,
   en: englishMessages,
-  fr: frenchMessages,
-  ru: russianMessages,
 } satisfies Record<Locale, typeof englishMessages>;
 
 export function createHomeInsightTranslator(locale: string): HomeInsightTranslator {

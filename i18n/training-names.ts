@@ -9,7 +9,7 @@ interface TrainingNameRules {
 
 // Program and workout identity remains exactly as imported or entered by the
 // user. These rules only localize common generated names at display time.
-const rulesByLocale: Partial<Record<Locale, TrainingNameRules>> = {
+const rulesByLocale: Partial<Record<Locale | 'fr' | 'ru', TrainingNameRules>> = {
   ru: {
     phrases: {
       'New plan': 'Новый план',
@@ -45,7 +45,7 @@ function russianWeekWord(count: number): string {
 }
 
 export function getTrainingDisplayName(name: string, locale: string): string {
-  const rules = rulesByLocale[locale as Locale];
+  const rules = rulesByLocale[locale as Locale | 'fr' | 'ru'];
   if (!rules) return name;
 
   return name
