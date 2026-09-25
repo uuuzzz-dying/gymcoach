@@ -5,12 +5,14 @@ export const exercises = {
   title: 'Catalogue d’exercices',
   savedCount:
     '{count, plural, =0 {Aucun exercice enregistré.} one {# exercice enregistré.} other {# exercices enregistrés.}}',
+  showingFirst: 'Affichage des {shown} premiers résultats sur {total}. Affinez la recherche.',
   search: 'Rechercher un exercice par nom',
   emptyTitle: 'Aucun exercice',
   emptyDescription:
     'Le catalogue est vide. Ajoutez votre premier exercice pour pouvoir l’utiliser dans un programme.',
   noMatchTitle: 'Aucun exercice trouvé',
-  noMatchDescription: 'Aucun nom d’exercice ne correspond à « {query} ». Essayez une autre recherche.',
+  noMatchDescription:
+    'Aucun nom d’exercice ne correspond à « {query} ». Essayez une autre recherche.',
   restSeconds: 'repos {seconds} s',
   editTitle: 'Modifier l’exercice',
   addTitle: 'Ajouter un exercice',
@@ -41,6 +43,7 @@ export const exercises = {
     finish: 'Arrivée',
     startAlt: 'Position de départ de {name}',
     finishAlt: 'Position d’arrivée de {name}',
+    animationAlt: 'Démonstration animée de {name}',
     showStart: 'Afficher la position de départ',
     showFinish: 'Afficher la position d’arrivée',
     play: 'Lancer l’animation',
@@ -52,6 +55,9 @@ export const exercises = {
     disclaimer:
       'Utilisez ces images comme repère visuel, pas comme substitut à un coach. Arrêtez si le mouvement provoque une douleur vive.',
     source: 'Source : {source} · {license}',
+    animationSource: 'Source de l’animation : jeu de données · {attribution}',
+    steps: 'Comment réaliser le mouvement',
+    loading: 'Chargement de l’animation…',
     missing: 'Aucun média local vérifié n’est associé à cet exercice personnalisé pour l’instant.',
     searchCommons: 'Chercher sur Wikimedia Commons',
   },

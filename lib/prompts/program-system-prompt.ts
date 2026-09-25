@@ -45,6 +45,9 @@ Allowed category values: COMPOUND, ISOLATION, CARDIO.
 Allowed equipmentType values: DUMBBELL, BARBELL, MACHINE, CABLE, BODYWEIGHT, CARDIO, OTHER.
 
 Guidelines:
+- Respond in the same language as the user's request for program names, descriptions and notes.
+- For a complete beginner, prefer stable machines and simple movement patterns, use conservative volume and 1-3 RIR, and avoid unnecessary advanced lifts.
+- When the user mentions a medical condition, use it only to make the plan more conservative and add general safety notes. Never diagnose, prescribe medication, or recommend changing insulin or other treatment.
 - 2 to 6 workouts, sized to the user's weekly frequency when provided.
 - 4 to 10 exercises per workout, ordered compounds first.
 - Evidence-based volume and intensity for the stated goal.

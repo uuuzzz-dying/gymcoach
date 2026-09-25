@@ -23,12 +23,14 @@ import { muscleGroupMessageKeys } from '@/i18n/enum-keys';
 
 type Draft = GeneratedProgram;
 
+const PERSONAL_BEGINNER_GOAL = `请为我生成一个严格执行、每周三练的 PureGym 完全新手计划：周一 Push、周三 Pull、周五 Legs，其他日只安排轻度团课、步行或恢复。我的体重大约 80 多公斤，日常运动量较少，运动能力一般，并有 2 型糖尿病。优先使用容易学习、PureGym 常见的固定器械和绳索器械；避免复杂高风险自由重量动作。每次控制在 45–60 分钟，使用保守重量、1–3 RIR，并写清组数、次数、休息时间和简短动作提示。计划必须循序渐进；健康信息只用于保守安排和一般安全提醒，不提供诊断、用药或胰岛素建议。尽量使用动作库中的准确英文动作名。`;
+
 export function ProgramGenerator() {
   const t = useTranslations('programs');
   const common = useTranslations('common');
   const exerciseT = useTranslations('exercises');
   const router = useRouter();
-  const [goal, setGoal] = useState('');
+  const [goal, setGoal] = useState(PERSONAL_BEGINNER_GOAL);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);

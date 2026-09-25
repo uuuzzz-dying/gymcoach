@@ -2,6 +2,7 @@ export const exercises = {
   title: 'Exercise catalog',
   savedCount:
     '{count, plural, =0 {No exercises saved.} one {# exercise saved.} other {# exercises saved.}}',
+  showingFirst: 'Showing the first {shown} of {total}. Type a more specific search to narrow it.',
   search: 'Search exercises by name',
   emptyTitle: 'No exercises',
   emptyDescription: 'The catalog is empty. Add your first exercise so you can use it in a program.',
@@ -31,12 +32,12 @@ export const exercises = {
   media: {
     button: 'Technique',
     open: 'View technique for {name}',
-    description:
-      'Start and finish frames alternate automatically. Pause to inspect either position.',
+    description: 'Use the animation and written steps together before you start the set.',
     start: 'Start',
     finish: 'Finish',
     startAlt: '{name} starting position',
     finishAlt: '{name} finishing position',
+    animationAlt: '{name} animated exercise demonstration',
     showStart: 'Show starting position',
     showFinish: 'Show finishing position',
     play: 'Play animation',
@@ -48,6 +49,9 @@ export const exercises = {
     disclaimer:
       'Use the frames as a visual reference, not as a substitute for coaching. Stop if the movement causes sharp pain.',
     source: 'Source: {source} · {license}',
+    animationSource: 'Animation source: exercise dataset · {attribution}',
+    steps: 'How to perform it',
+    loading: 'Loading animation…',
     missing: 'No verified local media is mapped to this custom exercise yet.',
     searchCommons: 'Search Wikimedia Commons',
   },

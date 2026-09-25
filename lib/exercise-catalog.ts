@@ -4,6 +4,7 @@ import {
   EquipmentType,
   type PrismaClient,
 } from '@/prisma/generated/client';
+import openGymCatalog from '@/data/opengym-exercises.zh.json';
 
 // ============================================================
 // Default exercise catalog
@@ -21,6 +22,13 @@ export interface CatalogExercise {
   notes?: string;
 }
 
+interface OpenGymCatalogRow extends CatalogExercise {
+  datasetId: string;
+  imageUrl: string;
+  gifUrl: string;
+  attribution: string;
+}
+
 export const EXERCISE_CATALOG: CatalogExercise[] = [
   // Chest
   {
@@ -29,7 +37,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.BARBELL,
     defaultRestSec: 150,
-    notes: 'Bar in the heel of the palm, wrist aligned with the forearm. Elbows at 45 degrees from the torso. Touch the chest.',
+    notes:
+      'Bar in the heel of the palm, wrist aligned with the forearm. Elbows at 45 degrees from the torso. Touch the chest.',
   },
   {
     name: 'Incline dumbbell press (30 deg)',
@@ -37,7 +46,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 120,
-    notes: 'Bench at 30 degrees. Tempo 3-0-1-0. Do not lock the elbows at the top. Upper-chest focus.',
+    notes:
+      'Bench at 30 degrees. Tempo 3-0-1-0. Do not lock the elbows at the top. Upper-chest focus.',
   },
   {
     name: 'Pec deck (or cable fly)',
@@ -45,7 +55,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.MACHINE,
     defaultRestSec: 75,
-    notes: 'Elbows 5 to 10 degrees below the shoulder line. Driven by the elbows. Pause at the stretch and at the contraction.',
+    notes:
+      'Elbows 5 to 10 degrees below the shoulder line. Driven by the elbows. Pause at the stretch and at the contraction.',
   },
 
   // Back
@@ -56,7 +67,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     equipmentType: EquipmentType.BODYWEIGHT,
     defaultRestSec: 120,
     usesBodyweight: true,
-    notes: 'Pronated grip, shoulder width + 10 cm. Strict tempo. Pull with the elbows toward the hips. Add load once 4x10 is reached.',
+    notes:
+      'Pronated grip, shoulder width + 10 cm. Strict tempo. Pull with the elbows toward the hips. Add load once 4x10 is reached.',
   },
   {
     name: 'Lat pulldown (wide grip)',
@@ -64,7 +76,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 120,
-    notes: 'Wide pronated grip. Pull to the collarbones, shoulder blades down. Torso slightly leaned back.',
+    notes:
+      'Wide pronated grip. Pull to the collarbones, shoulder blades down. Torso slightly leaned back.',
   },
   {
     name: 'Bent-over barbell row',
@@ -80,7 +93,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 90,
-    notes: 'Parallel handles. Pull toward the navel. Squeeze the shoulder blades. Elbows close to the body.',
+    notes:
+      'Parallel handles. Pull toward the navel. Squeeze the shoulder blades. Elbows close to the body.',
   },
 
   // Shoulders
@@ -98,7 +112,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 60,
-    notes: 'Cable in front of the body. Elbow slightly bent. Lead with the elbow. Stop at shoulder height. Slow descent.',
+    notes:
+      'Cable in front of the body. Elbow slightly bent. Lead with the elbow. Stop at shoulder height. Slow descent.',
   },
   {
     name: 'Machine rear delt fly',
@@ -106,7 +121,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.MACHINE,
     defaultRestSec: 60,
-    notes: 'Reverse pec deck. Driven by the elbows toward the back. Palms facing the floor. Squeeze 1s.',
+    notes:
+      'Reverse pec deck. Driven by the elbows toward the back. Palms facing the floor. Squeeze 1s.',
   },
 
   // Biceps
@@ -124,7 +140,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 75,
-    notes: 'Bench at 60 degrees. Elbows behind the torso, fixed. Supinate on the way up. Full stretch at the bottom (Maeo 2021).',
+    notes:
+      'Bench at 60 degrees. Elbows behind the torso, fixed. Supinate on the way up. Full stretch at the bottom (Maeo 2021).',
   },
 
   // Triceps
@@ -135,7 +152,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     equipmentType: EquipmentType.MACHINE,
     defaultRestSec: 75,
     usesBodyweight: true,
-    notes: 'Vertical torso for triceps focus. On an assisted machine, log the machine assistance setting as the added load.',
+    notes:
+      'Vertical torso for triceps focus. On an assisted machine, log the machine assistance setting as the added load.',
   },
   {
     name: 'Triceps pushdown (rope)',
@@ -143,7 +161,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 60,
-    notes: 'Elbows pinned to the body. Spread the rope at the bottom. Do not snap the elbow into lockout (95% max extension).',
+    notes:
+      'Elbows pinned to the body. Spread the rope at the bottom. Do not snap the elbow into lockout (95% max extension).',
   },
 
   // Quads
@@ -267,7 +286,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 120,
-    notes: 'Dumbbells let each side work independently. Wrists stacked over the elbows. Touch at chest level, do not lock out hard.',
+    notes:
+      'Dumbbells let each side work independently. Wrists stacked over the elbows. Touch at chest level, do not lock out hard.',
   },
   {
     name: 'Machine chest press',
@@ -275,7 +295,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.MACHINE,
     defaultRestSec: 90,
-    notes: 'Handles at mid-chest height. Drive through the chest, stop just short of lockout. Great for pushing close to failure safely.',
+    notes:
+      'Handles at mid-chest height. Drive through the chest, stop just short of lockout. Great for pushing close to failure safely.',
   },
 
   // Back
@@ -285,7 +306,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 120,
-    notes: 'Palms facing, shoulder-width handle. Pull to the upper chest, drive the elbows down and back.',
+    notes:
+      'Palms facing, shoulder-width handle. Pull to the upper chest, drive the elbows down and back.',
   },
   {
     name: 'Straight-arm cable pulldown',
@@ -293,7 +315,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 75,
-    notes: 'Arms nearly straight, slight elbow bend held fixed. Drive the bar to the thighs with the lats. Big stretch at the top.',
+    notes:
+      'Arms nearly straight, slight elbow bend held fixed. Drive the bar to the thighs with the lats. Big stretch at the top.',
   },
   {
     name: 'Chest-supported machine row',
@@ -301,7 +324,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.MACHINE,
     defaultRestSec: 90,
-    notes: 'Chest pad removes lower-back fatigue. Row to the torso, squeeze the shoulder blades, control the stretch.',
+    notes:
+      'Chest pad removes lower-back fatigue. Row to the torso, squeeze the shoulder blades, control the stretch.',
   },
   {
     name: 'Single-arm dumbbell row',
@@ -309,7 +333,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 90,
-    notes: 'Knee and hand on the bench, flat back. Pull toward the hip, elbow close to the body. Full stretch at the bottom.',
+    notes:
+      'Knee and hand on the bench, flat back. Pull toward the hip, elbow close to the body. Full stretch at the bottom.',
   },
 
   // Shoulders
@@ -319,7 +344,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.BARBELL,
     defaultRestSec: 150,
-    notes: 'Brace the core, glutes tight, no excessive arch. Bar travels over the mid-foot. Lock out with the head through.',
+    notes:
+      'Brace the core, glutes tight, no excessive arch. Bar travels over the mid-foot. Lock out with the head through.',
   },
   {
     name: 'Dumbbell lateral raise',
@@ -327,7 +353,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 60,
-    notes: 'Slight forward lean, elbows soft. Lead with the elbows to shoulder height. Control the descent, no swinging.',
+    notes:
+      'Slight forward lean, elbows soft. Lead with the elbows to shoulder height. Control the descent, no swinging.',
   },
   {
     name: 'Face pull (rope)',
@@ -335,7 +362,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 60,
-    notes: 'Cable at face height. Pull the rope apart toward the forehead, externally rotate. Rear delts and upper back.',
+    notes:
+      'Cable at face height. Pull the rope apart toward the forehead, externally rotate. Rear delts and upper back.',
   },
 
   // Biceps
@@ -345,7 +373,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 60,
-    notes: 'Constant cable tension through the range. Elbows pinned. Squeeze 1s at the top, no swinging.',
+    notes:
+      'Constant cable tension through the range. Elbows pinned. Squeeze 1s at the top, no swinging.',
   },
   {
     name: 'Concentration curl',
@@ -353,7 +382,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 60,
-    notes: 'Seated, elbow braced on the inner thigh. Strict, full contraction. High peak-contraction tension.',
+    notes:
+      'Seated, elbow braced on the inner thigh. Strict, full contraction. High peak-contraction tension.',
   },
 
   // Forearms
@@ -363,7 +393,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.BARBELL,
     defaultRestSec: 60,
-    notes: 'Forearms on the thighs or a bench, palms up. Let the bar roll to the fingers, then curl the wrists up. Full range, no momentum.',
+    notes:
+      'Forearms on the thighs or a bench, palms up. Let the bar roll to the fingers, then curl the wrists up. Full range, no momentum.',
   },
   {
     name: 'Reverse EZ-bar curl',
@@ -371,7 +402,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.BARBELL,
     defaultRestSec: 60,
-    notes: 'Pronated (palms down) grip. Targets the brachioradialis and wrist extensors. Lighter load, strict tempo.',
+    notes:
+      'Pronated (palms down) grip. Targets the brachioradialis and wrist extensors. Lighter load, strict tempo.',
   },
 
   // Biceps (brachialis emphasis)
@@ -381,7 +413,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 60,
-    notes: 'Neutral grip throughout. Emphasizes the brachialis and brachioradialis. Elbows fixed, no swinging.',
+    notes:
+      'Neutral grip throughout. Emphasizes the brachialis and brachioradialis. Elbows fixed, no swinging.',
   },
 
   // Triceps
@@ -391,7 +424,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.BARBELL,
     defaultRestSec: 120,
-    notes: 'Grip just inside shoulder width. Elbows tucked. Bar to the lower chest. Triceps-biased pressing.',
+    notes:
+      'Grip just inside shoulder width. Elbows tucked. Bar to the lower chest. Triceps-biased pressing.',
   },
   {
     name: 'Overhead cable triceps extension',
@@ -399,7 +433,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 60,
-    notes: 'Rope from a low or high pulley, facing away. Long-head stretch overhead. Extend fully, keep the elbows in.',
+    notes:
+      'Rope from a low or high pulley, facing away. Long-head stretch overhead. Extend fully, keep the elbows in.',
   },
   {
     name: 'EZ-bar skull crusher',
@@ -407,7 +442,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.BARBELL,
     defaultRestSec: 75,
-    notes: 'Lower to the forehead or behind the head for more stretch. Elbows pointing up, kept narrow. Controlled descent.',
+    notes:
+      'Lower to the forehead or behind the head for more stretch. Elbows pointing up, kept narrow. Controlled descent.',
   },
 
   // Quads
@@ -417,7 +453,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.MACHINE,
     defaultRestSec: 150,
-    notes: 'Feet mid-platform, shoulder width. Lower until the knees reach the chest without the lower back rounding. Do not lock out hard.',
+    notes:
+      'Feet mid-platform, shoulder width. Lower until the knees reach the chest without the lower back rounding. Do not lock out hard.',
   },
   {
     name: 'Goblet squat',
@@ -425,7 +462,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 120,
-    notes: 'Hold a dumbbell at the chest. Upright torso, elbows inside the knees at the bottom. Great for learning depth.',
+    notes:
+      'Hold a dumbbell at the chest. Upright torso, elbows inside the knees at the bottom. Great for learning depth.',
   },
   {
     name: 'Bulgarian split squat',
@@ -433,7 +471,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.DUMBBELL,
     defaultRestSec: 90,
-    notes: 'Rear foot elevated. Most weight on the front leg, vertical shin bias for quads. Control the descent.',
+    notes:
+      'Rear foot elevated. Most weight on the front leg, vertical shin bias for quads. Control the descent.',
   },
 
   // Hamstrings
@@ -443,7 +482,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.MACHINE,
     defaultRestSec: 75,
-    notes: 'Hips pinned to the pad. Curl fully, pause 1s at the contraction, control the negative. No hip lift.',
+    notes:
+      'Hips pinned to the pad. Curl fully, pause 1s at the contraction, control the negative. No hip lift.',
   },
 
   // Glutes
@@ -453,7 +493,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.CABLE,
     defaultRestSec: 60,
-    notes: 'Ankle strap on a low pulley. Hinge slightly, drive the heel back and up. Squeeze the glute at the top, no lower-back arch.',
+    notes:
+      'Ankle strap on a low pulley. Hinge slightly, drive the heel back and up. Squeeze the glute at the top, no lower-back arch.',
   },
 
   // Lower back
@@ -464,7 +505,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     equipmentType: EquipmentType.BODYWEIGHT,
     defaultRestSec: 60,
     usesBodyweight: true,
-    notes: 'Hips on the pad. Round and extend through the spine, or stay rigid to bias the glutes. Add a plate for load.',
+    notes:
+      'Hips on the pad. Round and extend through the spine, or stay rigid to bias the glutes. Add a plate for load.',
   },
   {
     name: 'Barbell good morning',
@@ -472,7 +514,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.COMPOUND,
     equipmentType: EquipmentType.BARBELL,
     defaultRestSec: 120,
-    notes: 'Bar on the upper back. Hinge at the hips with a flat back, soft knees. Light load, feel the spinal erectors and hamstrings.',
+    notes:
+      'Bar on the upper back. Hinge at the hips with a flat back, soft knees. Light load, feel the spinal erectors and hamstrings.',
   },
 
   // Abs
@@ -482,7 +525,8 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     category: ExerciseCategory.ISOLATION,
     equipmentType: EquipmentType.MACHINE,
     defaultRestSec: 60,
-    notes: 'Flex the spine against the resistance, ribs toward the pelvis. Controlled tempo, pause at the contraction.',
+    notes:
+      'Flex the spine against the resistance, ribs toward the pelvis. Controlled tempo, pause at the contraction.',
   },
 
   // ============================================================
@@ -526,20 +570,67 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
   },
 ];
 
+// openGym's upstream text dataset contains 1,324 records. Six names are exact
+// duplicates, so the generated file keeps 1,318 unique exercises. We import
+// only the MIT-licensed metadata and Chinese instructions, never the separately
+// licensed images/GIFs. The smaller hand-written catalog above remains the
+// authoritative beginner set and wins on name collisions.
+const curatedNames = new Set(
+  EXERCISE_CATALOG.map((exercise) => exercise.name.toLocaleLowerCase('en-US')),
+);
+
+export const OPENGYM_EXERCISE_CATALOG: CatalogExercise[] = (
+  openGymCatalog as unknown as OpenGymCatalogRow[]
+)
+  .filter((exercise) => !curatedNames.has(exercise.name.toLocaleLowerCase('en-US')))
+  .map(({ name, muscleGroup, category, equipmentType, defaultRestSec, usesBodyweight, notes }) => ({
+    name,
+    muscleGroup,
+    category,
+    equipmentType,
+    defaultRestSec,
+    usesBodyweight,
+    notes,
+  }));
+
+export const COMPLETE_EXERCISE_COUNT = EXERCISE_CATALOG.length + OPENGYM_EXERCISE_CATALOG.length;
+
 // Upserts the default catalog for a user. Returns a name -> exercise id map so
 // callers can wire up a starter program. Idempotent (safe to re-run).
 export async function seedExerciseCatalog(
   prisma: PrismaClient,
   userId: string,
 ): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
+  // Preserve the richer, hand-written cues for the beginner catalog.
   for (const data of EXERCISE_CATALOG) {
-    const exercise = await prisma.exercise.upsert({
+    await prisma.exercise.upsert({
       where: { userId_name: { userId, name: data.name } },
       update: data,
       create: { ...data, userId },
     });
-    map.set(data.name, exercise.id);
   }
-  return map;
+
+  // Bulk insert the full reference catalog. skipDuplicates makes this safe for
+  // existing accounts and keeps a user's edits intact on later visits.
+  if (OPENGYM_EXERCISE_CATALOG.length > 0) {
+    await prisma.exercise.createMany({
+      data: OPENGYM_EXERCISE_CATALOG.map((exercise) => ({ ...exercise, userId })),
+      skipDuplicates: true,
+    });
+  }
+
+  const exercises = await prisma.exercise.findMany({
+    where: { userId },
+    select: { id: true, name: true },
+  });
+  return new Map(exercises.map((exercise) => [exercise.name, exercise.id]));
+}
+
+// Existing accounts were created before the expanded catalog shipped. Pages
+// that need the catalog call this once; after the backfill the cheap count gate
+// avoids repeating a 1,300-row insert attempt.
+export async function ensureExerciseCatalog(prisma: PrismaClient, userId: string): Promise<void> {
+  const count = await prisma.exercise.count({ where: { userId } });
+  if (count >= 1000) return;
+  await seedExerciseCatalog(prisma, userId);
 }

@@ -35,6 +35,8 @@ const ENV_KEYS = [
   'OPENROUTER_APP_NAME',
   'OPENROUTER_APP_URL',
   'OPENROUTER_MAX_TOKENS',
+  'OPENAI_API_KEY',
+  'OPENAI_MODEL',
   'CODEX_LB_API_KEY',
   'CODEX_LB_BASE_URL',
   'CODEX_LB_MODEL',
@@ -66,6 +68,12 @@ describe('provider selection', () => {
     process.env.LLM_PROVIDER = 'OpenRouter';
     expect(resolveProviderId()).toBe('openrouter');
     expect(getLlmProvider().id).toBe('openrouter');
+  });
+
+  it('selects OpenAI when LLM_PROVIDER=openai (case-insensitive)', () => {
+    process.env.LLM_PROVIDER = 'OpenAI';
+    expect(resolveProviderId()).toBe('openai');
+    expect(getLlmProvider().id).toBe('openai');
   });
 
   it('selects codex-lb using its supported aliases', () => {

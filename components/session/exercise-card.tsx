@@ -144,6 +144,7 @@ export function ExerciseCard({
           exerciseName={exo.name}
           displayName={exerciseName(exo.name)}
           equipmentType={exo.equipmentType}
+          notes={exo.notes}
         />
         {/* Exercise cue (issue #224): when the exercise carries a technique
             note, surface it as an always-visible muted line right under the

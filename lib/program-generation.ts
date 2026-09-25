@@ -8,11 +8,19 @@ import {
 } from '@/lib/schemas/program-generation';
 import { defaultIntraSetConfig } from '@/lib/intra-set-autoregulation';
 import type { Prisma } from '@/lib/prisma-client';
+import { ensureExerciseCatalog, EXERCISE_CATALOG } from '@/lib/exercise-catalog';
 
 // Generates a structured program draft from a natural-language goal. Does not
 // persist anything: the result is previewed (and edited) before saving.
 export async function generateProgram(userId: string, goal: string): Promise<GeneratedProgram> {
   const provider = getLlmProvider();
+  await ensureExerciseCatalog(db, userId);
+
+  // The complete reference library is available in the UI, but sending 1,300+
+  // rows on every generation wastes tokens and makes beginner plans less
+  // focused. Give the coach the deliberately curated gym-ready subset; it can
+  // still add another named exercise when the user's request requires one.
+  const preferredNames = EXERCISE_CATALOG.map((exercise) => exercise.name);
 
   const [user, exercises] = await Promise.all([
     db.user.findUnique({
@@ -26,7 +34,7 @@ export async function generateProgram(userId: string, goal: string): Promise<Gen
       },
     }),
     db.exercise.findMany({
-      where: { userId },
+      where: { userId, name: { in: preferredNames } },
       select: { name: true, muscleGroup: true, category: true, equipmentType: true },
       orderBy: { name: 'asc' },
     }),

@@ -89,6 +89,7 @@ export default async function ExerciseDetailPage({ params, searchParams }: Props
               exerciseName={exercise.name}
               displayName={displayName}
               equipmentType={exercise.equipmentType}
+              notes={exercise.notes}
             />
           </div>
           <div className="flex flex-wrap gap-2">

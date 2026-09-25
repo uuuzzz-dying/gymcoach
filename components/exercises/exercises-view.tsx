@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Pencil, Search } from 'lucide-react';
 import type { Exercise, MuscleGroup } from '@/lib/prisma-client';
@@ -20,37 +20,68 @@ import {
 
 interface ExercisesViewProps {
   exercises: Exercise[];
+  totalCount?: number;
 }
 
-export function ExercisesView({ exercises }: ExercisesViewProps) {
+export function ExercisesView({ exercises, totalCount = exercises.length }: ExercisesViewProps) {
   const t = useTranslations('exercises');
   const common = useTranslations('common');
-  const exerciseName = useExerciseName();
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Exercise | null>(null);
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState(exercises);
+  const [resultCount, setResultCount] = useState(totalCount);
 
-  // Case-insensitive substring match on the exercise name. The query only
-  // narrows the already-loaded list (no API call); an empty query shows
-  // everything, preserving the original behaviour.
-  const filtered = useMemo(() => {
+  useEffect(() => {
+    if (query.trim()) return;
+    setResults(exercises);
+    setResultCount(totalCount);
+  }, [exercises, query, totalCount]);
+
+  useEffect(() => {
+    const q = query.trim();
+    if (!q) return;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      void fetch(`/api/exercises?q=${encodeURIComponent(q)}`, { signal: controller.signal })
+        .then(async (response) => {
+          if (!response.ok) throw new Error(`Search failed: ${response.status}`);
+          return response.json() as Promise<{ items: Exercise[]; total: number }>;
+        })
+        .then(({ items, total }) => {
+          setResults(items);
+          setResultCount(total);
+        })
+        .catch((error: unknown) => {
+          if (!(error instanceof DOMException && error.name === 'AbortError')) {
+            setResults([]);
+            setResultCount(0);
+          }
+        });
+    }, 250);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query]);
+
+  const displayed = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return exercises;
-    return exercises.filter(
-      (ex) => ex.name.toLowerCase().includes(q) || exerciseName(ex.name).toLowerCase().includes(q),
+    return results.filter(
+      (exercise) =>
+        exercise.name.toLowerCase().includes(q) || exercise.notes?.toLowerCase().includes(q),
     );
-  }, [exerciseName, exercises, query]);
-
-  const grouped = useMemo(() => groupByMuscle(filtered), [filtered]);
+  }, [exercises, query, results]);
+  const displayedCount = query.trim() ? resultCount : totalCount;
+  const grouped = useMemo(() => groupByMuscle(displayed), [displayed]);
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t('savedCount', { count: exercises.length })}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('savedCount', { count: totalCount })}</p>
         </div>
         <Button onClick={() => setCreateOpen(true)} className="min-h-tap">
           <Plus className="size-4" />
@@ -58,7 +89,7 @@ export function ExercisesView({ exercises }: ExercisesViewProps) {
         </Button>
       </div>
 
-      {exercises.length > 0 && (
+      {totalCount > 0 && (
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -72,14 +103,14 @@ export function ExercisesView({ exercises }: ExercisesViewProps) {
         </div>
       )}
 
-      {exercises.length === 0 ? (
+      {totalCount === 0 ? (
         <Card>
           <CardHeader>
             <CardTitle>{t('emptyTitle')}</CardTitle>
             <CardDescription>{t('emptyDescription')}</CardDescription>
           </CardHeader>
         </Card>
-      ) : filtered.length === 0 ? (
+      ) : displayed.length === 0 ? (
         <Card>
           <CardHeader>
             <CardTitle>{t('noMatchTitle')}</CardTitle>
@@ -88,6 +119,11 @@ export function ExercisesView({ exercises }: ExercisesViewProps) {
         </Card>
       ) : (
         <div className="flex flex-col gap-6">
+          {displayedCount > displayed.length && (
+            <p className="text-xs text-muted-foreground">
+              {t('showingFirst', { shown: displayed.length, total: displayedCount })}
+            </p>
+          )}
           {Object.entries(grouped).map(([group, list]) => (
             <section key={group} className="flex flex-col gap-2">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -134,6 +170,7 @@ function ExerciseRow({ exercise, onEdit }: { exercise: Exercise; onEdit: () => v
           exerciseName={exercise.name}
           displayName={displayName}
           equipmentType={exercise.equipmentType}
+          notes={exercise.notes}
           compact
         />
         <div className="min-w-0 flex-1 basis-40 py-0.5">

@@ -56,6 +56,15 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
   output: 'standalone',
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+        pathname: '/hasaneyldrm/exercises-dataset/**',
+      },
+    ],
+  },
 };
 
 module.exports = withPWA(withNextIntl(nextConfig));

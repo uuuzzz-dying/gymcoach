@@ -2,6 +2,7 @@ import { AnthropicProvider } from './anthropic';
 import { CodexLbProvider } from './codex-lb';
 import { OpenRouterProvider } from './openrouter';
 import { DemoProvider } from './demo';
+import { OpenAiProvider } from './openai';
 import type { LlmProvider } from './types';
 
 export * from './types';
@@ -14,6 +15,7 @@ export function resolveProviderId(): LlmProviderId {
   const raw = process.env.LLM_PROVIDER?.trim().toLowerCase();
   if (raw === 'codex-lb' || raw === 'codex_lb' || raw === 'codexlb') return 'codex-lb';
   if (raw === 'openrouter') return 'openrouter';
+  if (raw === 'openai') return 'openai';
   if (raw === 'demo') return 'demo';
   return 'anthropic';
 }
@@ -22,6 +24,7 @@ export function getLlmProvider(): LlmProvider {
   const id = resolveProviderId();
   if (id === 'codex-lb') return new CodexLbProvider();
   if (id === 'openrouter') return new OpenRouterProvider();
+  if (id === 'openai') return new OpenAiProvider();
   if (id === 'demo') return new DemoProvider();
   return new AnthropicProvider();
 }

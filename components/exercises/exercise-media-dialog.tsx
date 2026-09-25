@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { CirclePlay, ExternalLink, Pause, Play, SkipBack, SkipForward, Wrench } from 'lucide-react';
 import type { EquipmentType } from '@/lib/prisma-client';
 import { getExerciseMedia } from '@/lib/exercise-media';
+import type { OpenGymGuide } from '@/lib/opengym-guide';
 import { equipmentTypeMessageKeys } from '@/i18n/enum-keys';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ interface Props {
   exerciseName: string;
   displayName: string;
   equipmentType: EquipmentType;
+  notes?: string | null;
   compact?: boolean;
 }
 
@@ -29,11 +31,15 @@ export function ExerciseMediaDialog({
   exerciseName,
   displayName,
   equipmentType,
+  notes,
   compact = false,
 }: Props) {
   const t = useTranslations('exercises.media');
   const exerciseT = useTranslations('exercises');
   const media = getExerciseMedia(exerciseName);
+  const [guide, setGuide] = useState<OpenGymGuide | null | undefined>(undefined);
+  const [loadingGuide, setLoadingGuide] = useState(false);
+  const instructions = guide?.notes || notes;
   const [open, setOpen] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [frame, setFrame] = useState(0);
@@ -49,6 +55,18 @@ export function ExerciseMediaDialog({
     if (value) {
       setFrame(0);
       setPlaying(true);
+      if (guide === undefined && !loadingGuide) {
+        setLoadingGuide(true);
+        void fetch(`/api/exercise-guide?name=${encodeURIComponent(exerciseName)}`)
+          .then(async (response) => {
+            if (!response.ok) return null;
+            const body = (await response.json()) as { guide?: OpenGymGuide };
+            return body.guide ?? null;
+          })
+          .then(setGuide)
+          .catch(() => setGuide(null))
+          .finally(() => setLoadingGuide(false));
+      }
     }
   }
 
@@ -75,7 +93,7 @@ export function ExerciseMediaDialog({
             {media ? (
               <>
                 <Image
-                  src={media.frames[0]}
+                  src={guide?.imageUrl ?? media!.frames[0]}
                   alt=""
                   fill
                   unoptimized
@@ -109,70 +127,100 @@ export function ExerciseMediaDialog({
           <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
 
-        {media ? (
+        {guide || media || instructions || loadingGuide ? (
           <div className="space-y-4">
-            <div className="relative aspect-[3/2] overflow-hidden rounded-md border bg-black">
-              {media.frames.map((source, index) => (
-                <Image
-                  key={source}
-                  src={source}
-                  alt={t(index === 0 ? 'startAlt' : 'finishAlt', { name: displayName })}
-                  fill
-                  unoptimized
-                  sizes="(max-width: 640px) 90vw, 560px"
-                  className={`object-contain transition-opacity duration-300 ${
-                    frame === index ? 'opacity-100' : 'opacity-0'
-                  }`}
-                />
-              ))}
-              <Badge className="absolute bottom-2 left-2">
-                {t(frame === 0 ? 'start' : 'finish')}
-              </Badge>
-              {media.approximate && (
-                <Badge variant="secondary" className="absolute right-2 top-2">
-                  {t('similarVariant')}
-                </Badge>
-              )}
-            </div>
+            {(guide || media) && (
+              <div className="relative aspect-[3/2] overflow-hidden rounded-md border bg-black">
+                {guide ? (
+                  <Image
+                    src={guide.gifUrl}
+                    alt={t('animationAlt', { name: displayName })}
+                    fill
+                    unoptimized
+                    sizes="(max-width: 640px) 90vw, 560px"
+                    className="object-contain"
+                  />
+                ) : (
+                  media!.frames.map((source, index) => (
+                    <Image
+                      key={source}
+                      src={source}
+                      alt={t(index === 0 ? 'startAlt' : 'finishAlt', { name: displayName })}
+                      fill
+                      unoptimized
+                      sizes="(max-width: 640px) 90vw, 560px"
+                      className={`object-contain transition-opacity duration-300 ${
+                        frame === index ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  ))
+                )}
+                {!guide && (
+                  <Badge className="absolute bottom-2 left-2">
+                    {t(frame === 0 ? 'start' : 'finish')}
+                  </Badge>
+                )}
+                {!guide && media?.approximate && (
+                  <Badge variant="secondary" className="absolute right-2 top-2">
+                    {t('similarVariant')}
+                  </Badge>
+                )}
+              </div>
+            )}
 
-            <div className="flex items-center justify-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                  setPlaying(false);
-                  setFrame(0);
-                }}
-                aria-label={t('showStart')}
-                title={t('showStart')}
-              >
-                <SkipBack className="size-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => setPlaying((value) => !value)}
-                aria-label={t(playing ? 'pause' : 'play')}
-                title={t(playing ? 'pause' : 'play')}
-              >
-                {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                  setPlaying(false);
-                  setFrame(1);
-                }}
-                aria-label={t('showFinish')}
-                title={t('showFinish')}
-              >
-                <SkipForward className="size-4" />
-              </Button>
-            </div>
+            {loadingGuide && !guide && (
+              <p className="py-4 text-center text-sm text-muted-foreground">{t('loading')}</p>
+            )}
+
+            {!guide && (
+              <div className="flex items-center justify-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    setPlaying(false);
+                    setFrame(0);
+                  }}
+                  aria-label={t('showStart')}
+                  title={t('showStart')}
+                >
+                  <SkipBack className="size-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPlaying((value) => !value)}
+                  aria-label={t(playing ? 'pause' : 'play')}
+                  title={t(playing ? 'pause' : 'play')}
+                >
+                  {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    setPlaying(false);
+                    setFrame(1);
+                  }}
+                  aria-label={t('showFinish')}
+                  title={t('showFinish')}
+                >
+                  <SkipForward className="size-4" />
+                </Button>
+              </div>
+            )}
+
+            {instructions && (
+              <div className="space-y-2 border-t pt-4 text-sm">
+                <p className="font-medium">{t('steps')}</p>
+                <p className="whitespace-pre-line leading-6 text-muted-foreground">
+                  {instructions}
+                </p>
+              </div>
+            )}
 
             <div className="border-t pt-4 text-sm">
               <div className="flex items-center gap-2 font-medium">
@@ -186,15 +234,21 @@ export function ExerciseMediaDialog({
 
             <div className="space-y-1 border-t pt-4 text-xs text-muted-foreground">
               <p>{t('disclaimer')}</p>
-              <a
-                href={media.source.url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 underline underline-offset-2 hover:text-foreground"
-              >
-                {t('source', { source: media.source.name, license: media.source.license })}
-                <ExternalLink className="size-3" />
-              </a>
+              {(guide || media) && (
+                <a
+                  href={
+                    guide ? 'https://github.com/hasaneyldrm/exercises-dataset' : media!.source.url
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 underline underline-offset-2 hover:text-foreground"
+                >
+                  {guide
+                    ? t('animationSource', { attribution: guide.attribution })
+                    : t('source', { source: media!.source.name, license: media!.source.license })}
+                  <ExternalLink className="size-3" />
+                </a>
+              )}
             </div>
           </div>
         ) : (
