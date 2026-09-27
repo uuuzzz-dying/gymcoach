@@ -258,6 +258,21 @@ export function SessionSummary({
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">结束前：5–8 分钟放松</CardTitle>
+            <CardDescription>让呼吸和心率慢慢下来，不需要把自己拉到疼。</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ol className="space-y-2 text-sm leading-relaxed">
+              <li><span className="font-medium">1. 慢走 2–3 分钟：</span>放慢速度，恢复自然呼吸。</li>
+              <li><span className="font-medium">2. 今天练到的部位轻柔拉伸：</span>每个部位选 1 个动作，每侧约 20–30 秒。</li>
+              <li><span className="font-medium">3. 拉伸强度：</span>有牵拉感即可，不弹震、不憋气，不追求疼痛。</li>
+              <li><span className="font-medium">4. 最后检查：</span>记录异常疼痛、明显头晕或其他不适，再结束训练。</li>
+            </ol>
+          </CardContent>
+        </Card>
+
         <div className="space-y-2">
           <Label htmlFor="session-notes">{t('note')}</Label>
           <Textarea
