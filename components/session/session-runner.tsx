@@ -693,10 +693,22 @@ export function SessionRunner({
           />
         )}
 
-        {/* Keep the full logger available while the inline table is introduced:
-            strength users still retain warmup/drop-set, notes, AI parsing and
-            equipment selection; cardio continues to use this as its only input. */}
-        {!hydrated ? null : mode.kind === 'input' ? (
+        {/* One clear logging surface per exercise. Strength uses the inline
+            table above; cardio keeps the full logger. After any set, the
+            rest timer takes over the same space so there is only one obvious
+            next action on a phone. */}
+        {!hydrated ? null : mode.kind === 'rest' ? (
+          <RestTimer
+            endsAt={mode.endsAt}
+            totalSec={mode.totalSec}
+            nextLabel={restNextPe ? exerciseName(restNextPe.exercise.name) : null}
+            recommendation={restRecommendation}
+            unit={unit}
+            onEnd={handleRestEnd}
+            onSkip={handleSkipRest}
+            onAdd30={handleAdd30s}
+          />
+        ) : currentPE.exercise.category === 'CARDIO' ? (
           <SetInput
             programExercise={currentTarget}
             existingSets={currentSets}
@@ -713,18 +725,7 @@ export function SessionRunner({
             )}
             onSubmit={handleValidate}
           />
-        ) : (
-          <RestTimer
-            endsAt={mode.endsAt}
-            totalSec={mode.totalSec}
-            nextLabel={restNextPe ? exerciseName(restNextPe.exercise.name) : null}
-            recommendation={restRecommendation}
-            unit={unit}
-            onEnd={handleRestEnd}
-            onSkip={handleSkipRest}
-            onAdd30={handleAdd30s}
-          />
-        )}
+        ) : null}
 
         {/* In-session coach access (issue #111): opens the chat with this
             session attached so the advice is grounded in the live workout.
@@ -735,6 +736,10 @@ export function SessionRunner({
             <span className="ml-2">{t('askCoach')}</span>
           </Link>
         </Button>
+
+        <p className="text-center text-xs leading-relaxed text-muted-foreground">
+          器械有人用？直接点「下一项」，稍后从顶部动作条回来，不需要原地等。
+        </p>
 
         <div className="flex items-center justify-between gap-2 border-t border-border pt-4">
           <Button
