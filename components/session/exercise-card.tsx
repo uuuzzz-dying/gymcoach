@@ -18,6 +18,7 @@ import { formatCardioSet } from '@/lib/cardio';
 import type { SerializedLastPerformance } from './session-runner';
 import { useExerciseName } from '@/components/shared/use-exercise-name';
 import type { GymLoadConstraints } from '@/lib/gym-loads';
+import { getChineseExerciseGuide } from '@/lib/chinese-exercise-guides';
 import { ExerciseMediaDialog } from '@/components/exercises/exercise-media-dialog';
 
 // Last-session reference line for a cardio exercise (issue #176): duration and
@@ -57,6 +58,7 @@ export function ExerciseCard({
   const [notesOpen, setNotesOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const exo = programExercise.exercise;
+  const chineseGuide = getChineseExerciseGuide(exo.name, exerciseName(exo.name));
   // Cardio exercises (issue #133) are duration/distance based: the weight x
   // reps targets, load suggestion and last-performance load make no sense for
   // them, so those blocks are hidden.
@@ -160,26 +162,40 @@ export function ExerciseCard({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-3 pt-0">
-        <p className="text-sm font-medium">
-          {isCardio ? (
-            <>
-              {t('cardioPrescription', {
-                sets: programExercise.targetSets,
-                seconds: programExercise.restSec,
-              })}
-            </>
-          ) : (
-            <>
-              {t('strengthPrescription', {
-                sets: programExercise.targetSets,
-                reps: repsLabel,
-                rir: programExercise.targetRIR,
-                seconds: programExercise.restSec,
-                tempo: programExercise.tempo ?? 'none',
-              })}
-            </>
-          )}
-        </p>
+        {isCardio ? (
+          <p className="text-sm font-medium">
+            {t('cardioPrescription', {
+              sets: programExercise.targetSets,
+              seconds: programExercise.restSec,
+            })}
+          </p>
+        ) : (
+          <div className="rounded-2xl border-2 border-primary/20 bg-primary/5 p-4">
+            <p className="text-xs font-semibold tracking-wide text-primary">今天照这个做</p>
+            <p className="mt-1 text-2xl font-bold tracking-tight">
+              {suggestion.weight == null
+                ? `${repsLabel} 次 × ${programExercise.targetSets} 组`
+                : suggestion.weight === 0
+                  ? `自重 × ${repsLabel} 次 × ${programExercise.targetSets} 组`
+                  : `${formatWeight(suggestion.weight, unit, {
+                      decimals: 2,
+                      group: false,
+                      locale,
+                    })} × ${repsLabel} 次 × ${programExercise.targetSets} 组`}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              每组休息 {programExercise.restSec} 秒 · 目标保留约 {programExercise.targetRIR} 次余力
+            </p>
+            <div className="mt-3 border-t border-primary/10 pt-3">
+              <p className="text-sm font-semibold">主要发力：{chineseGuide.focus}</p>
+              <ul className="mt-2 space-y-1 text-sm leading-relaxed text-muted-foreground">
+                {chineseGuide.cues.map((cue) => (
+                  <li key={cue}>• {cue}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
 
         {lastPerformance && (!isCardio || lastPerformance.cardio) && (
           <div className="rounded-md bg-secondary/50 p-3 text-sm">
