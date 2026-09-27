@@ -8,6 +8,7 @@ import type { EquipmentType } from '@/lib/prisma-client';
 import { getExerciseMedia } from '@/lib/exercise-media';
 import type { OpenGymGuide } from '@/lib/opengym-guide';
 import { equipmentTypeMessageKeys } from '@/i18n/enum-keys';
+import { getChineseExerciseGuide } from '@/lib/chinese-exercise-guides';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,6 +38,7 @@ export function ExerciseMediaDialog({
   const t = useTranslations('exercises.media');
   const exerciseT = useTranslations('exercises');
   const media = getExerciseMedia(exerciseName);
+  const chineseGuide = getChineseExerciseGuide(exerciseName, displayName);
   const [guide, setGuide] = useState<OpenGymGuide | null | undefined>(undefined);
   const [loadingGuide, setLoadingGuide] = useState(false);
   const instructions = guide?.notes || notes;
@@ -129,6 +131,18 @@ export function ExerciseMediaDialog({
 
         {guide || media || instructions || loadingGuide ? (
           <div className="space-y-4">
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+              <p className="font-medium">中文动作教程</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                先看一遍动作演示，再开始第一组。常用新手动作已固定中文教程；其他动作会打开 B站中文搜索。
+              </p>
+              <Button asChild size="sm" className="mt-3 min-h-tap">
+                <a href={chineseGuide.href} target="_blank" rel="noreferrer">
+                  {chineseGuide.title}
+                  <ExternalLink className="ml-2 size-4" />
+                </a>
+              </Button>
+            </div>
             {(guide || media) && (
               <div className="relative aspect-[3/2] overflow-hidden rounded-md border bg-black">
                 {guide ? (
